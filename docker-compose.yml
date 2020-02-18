@@ -1,0 +1,78 @@
+version: "3.7"
+services:
+    atlassian-demo-postgres:
+        container_name: atlassian-demo-postgres
+        build:
+            context: ./postgres
+        image: "localhost/atlassian-demo-postgres:0.0.1"
+        restart: always
+        deploy:
+            resources:
+                limits:
+                    cpus: "1"
+                    memory: "500M"
+        environment:
+            - POSTGRES_PASSWORD=atlassian
+        volumes:
+            - atlassian-demo-postgres-storage:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+        networks:
+            - atlassian-demo-net
+
+    atlassian-demo-nginx:
+        container_name: atlassian-demo-nginx
+        build:
+            context: ./nginx
+        image: "localhost/atlassian-demo-nginx:0.0.1"
+        restart: always
+        depends_on:
+            - atlassian-demo-jira-core
+        deploy:
+            resources:
+                limits:
+                    cpus: "1"
+                    memory: "100M"
+        ports:
+            - "443:443"
+        networks:
+            - atlassian-demo-net
+
+    atlassian-demo-jira-core:
+        container_name: atlassian-demo-jira-core
+        build:
+            context: ./jira-core
+        image: "localhost/atlassian-demo-jira-core:0.0.1"
+        restart: always
+        depends_on:
+            - atlassian-demo-postgres
+        deploy:
+            resources:
+                limits:
+                    cpus: "2"
+                    memory: "2000M"
+        environment:
+            # database
+            - ATL_JDBC_URL=jdbc:postgresql://atlassian-demo-postgres:5432/jiracore
+            - ATL_JDBC_USER=jiracore
+            - ATL_JDBC_PASSWORD=atlassian
+            - ATL_DB_DRIVER=org.postgresql.Driver
+            - ATL_DB_TYPE=postgres72
+            # reverse proxy
+            - ATL_PROXY_NAME=localhost
+            - ATL_PROXY_PORT=443
+            - ATL_TOMCAT_SCHEME=https
+            - ATL_TOMCAT_SECURE=true
+            - ATL_TOMCAT_CONTEXTPATH=/jira-core
+        volumes:
+            - atlassian-demo-jira-core-storage:/var/atlassian/application-data/jira
+        networks:
+            - atlassian-demo-net
+
+networks:
+    atlassian-demo-net:
+        driver: bridge
+
+volumes:
+    atlassian-demo-postgres-storage:
+    atlassian-demo-jira-core-storage:
