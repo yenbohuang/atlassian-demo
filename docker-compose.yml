@@ -28,6 +28,7 @@ services:
         restart: always
         depends_on:
             - atlassian-demo-jira-core
+            - atlassian-demo-confluence
         deploy:
             resources:
                 limits:
@@ -81,7 +82,7 @@ services:
             resources:
                 limits:
                     cpus: "2"
-                    memory: "2000M"
+                    memory: "2500M"
         environment:
             # database
             - ATL_JDBC_URL=jdbc:postgresql://atlassian-demo-postgres:5432/confluence
