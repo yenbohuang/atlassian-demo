@@ -29,6 +29,7 @@ services:
         depends_on:
             - atlassian-demo-jira-core
             - atlassian-demo-confluence
+            - atlassian-demo-crowd
         deploy:
             resources:
                 limits:
@@ -51,7 +52,7 @@ services:
             resources:
                 limits:
                     cpus: "2"
-                    memory: "2000M"
+                    memory: "2500M"
         environment:
             # database
             - ATL_JDBC_URL=jdbc:postgresql://atlassian-demo-postgres:5432/jiracore
@@ -99,6 +100,30 @@ services:
             - atlassian-demo-confluence-storage:/var/atlassian/application-data/confluence
         networks:
             - atlassian-demo-net
+    
+    atlassian-demo-crowd:
+        container_name: atlassian-demo-crowd
+        build:
+            context: ./crowd
+        image: "localhost/atlassian-demo-crowd:0.0.1"
+        restart: always
+        depends_on:
+            - atlassian-demo-postgres
+        deploy:
+            resources:
+                limits:
+                    cpus: "1"
+                    memory: "1000M"
+        environment:
+            # reverse proxy
+            - ATL_PROXY_NAME=localhost
+            - ATL_PROXY_PORT=443
+            - ATL_TOMCAT_SCHEME=https
+            - ATL_TOMCAT_SECURE=true
+        volumes:
+            - atlassian-demo-crowd-storage:/var/atlassian/application-data/crowd
+        networks:
+            - atlassian-demo-net
 
 networks:
     atlassian-demo-net:
@@ -108,3 +133,4 @@ volumes:
     atlassian-demo-postgres-storage:
     atlassian-demo-jira-core-storage:
     atlassian-demo-confluence-storage:
+    atlassian-demo-crowd-storage:
