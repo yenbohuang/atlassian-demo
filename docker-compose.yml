@@ -1,5 +1,19 @@
 version: "3.7"
 services:
+    atlassian-demo-python-smtpd:
+        container_name: atlassian-demo-python-smtpd
+        build:
+            context: ./python-smtpd
+        image: "localhost/atlassian-demo-python-smtpd:0.0.1"
+        restart: always
+        deploy:
+            resources:
+                limits:
+                    cpus: "1"
+                    memory: "100M"
+        networks:
+            - atlassian-demo-net
+    
     atlassian-demo-postgres:
         container_name: atlassian-demo-postgres
         build:
