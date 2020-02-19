@@ -9,6 +9,15 @@
   * Crowd <https://localhost/crowd>
 * Run `./clean.sh` and clean up containers/volumes.
 
+## Configuration notes
+
+### Crowd
+
+* You need Crowd Data Center license to use SSO.
+* You need to use `http://atlassian-demo-crowd:8095/crowd/` for Crown server URL in applications (e.g., JIRA, Confluence).
+* You need to use docker container name for application remote address in Crowd (e.g., `atlassian-demo-jira-core`).
+* You need to add groups from applications (e.g., `jira-core-users`, `jira-administrators`) and add users to them.
+
 ## Replace server ID
 
 When local DB and volume are recreated, server ID is re-generated. Follow these KBs and replace it by the one for trial key. Remember restart docker container after service ID is updated.
