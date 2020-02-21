@@ -27,6 +27,12 @@
 /opt/atlassian/jira/conf/server.xml
 ```
 
+### SMTP server for debugging
+
+Use the following values and tail container logs for debugging. No mail is actually send out.
+* Host:	atlassian-demo-python-smtpd
+* SMTP Port: 25
+
 ## Replace server ID
 
 When local DB and volume are recreated, server ID is re-generated. Follow these KBs and replace it by the one for trial key. Remember restart docker container after service ID is updated.
