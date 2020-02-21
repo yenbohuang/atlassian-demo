@@ -18,6 +18,15 @@
 * You need to use docker container name for application remote address in Crowd (e.g., `atlassian-demo-jira-core`).
 * You need to add groups from applications (e.g., `jira-core-users`, `jira-administrators`) and add users to them.
 
+### JIRA
+
+* Where is server.xml?
+
+```
+/opt/atlassian/etc/server.xml.j2
+/opt/atlassian/jira/conf/server.xml
+```
+
 ## Replace server ID
 
 When local DB and volume are recreated, server ID is re-generated. Follow these KBs and replace it by the one for trial key. Remember restart docker container after service ID is updated.
@@ -50,3 +59,33 @@ where id = (
 ```  
 * Replace Server ID in "/var/atlassian/application-data/crowd/shared/crowd.cfg.xml".
 ```
+
+## Application links
+
+### Use unproxied application link
+
+For avoiding a lot of issues behind reverse proxy, we need to add a new connector (with different port number, e.g., 8081) in `server.xml` for JIRA and Confluence:
+
+```
+<Connector
+    port="8081"
+    connectionTimeout="20000"
+    maxThreads="200"
+    minSpareThreads="10" 
+    enableLookups="false"
+    acceptCount="10"
+    URIEncoding="UTF-8"
+    relaxedPathChars="[]|"
+    relaxedQueryChars="[]|{}^\`&quot;&lt;&gt;" />
+```
+
+Use the following values in "Remote application URL":
+
+|Application URL|Display URL|
+|---|---|
+|`http://atlassian-demo-confluence:8081/confluence`|`https://localhost/confluence`|
+|`http://atlassian-demo-jira-core:8081/jira-core`|`https://localhost/jira-core`|
+
+Refer to the following KBs for details:
+* <https://confluence.atlassian.com/kb/how-to-bypass-a-reverse-proxy-or-ssl-in-application-links-719095724.html>
+* <https://confluence.atlassian.com/kb/how-to-create-an-unproxied-application-link-719095740.html>
